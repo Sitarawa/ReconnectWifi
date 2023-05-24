@@ -26,26 +26,28 @@ echo %date% %time%,Start reConnectWifi %interfaceName%>> %logFileName%
 rem 現在の状態を表示 
 netsh interface show interface "%interfaceName%"
 
-rem Connectedが見つからなければ未接続判定
 :checking
 echo [%date% %time%] Checking %interfaceName%...
+
+rem インターフェースのステータスがConnectedでなければ未接続と判定
 netsh interface show interface %interfaceName% | find "Connect state:        Connected" > nul
 if ERRORLEVEL 1 (
   echo %date% %time%, %interfaceName% not connected>> %logFileName%
   goto notconnection
 )
 
-rem Connectedでもpingが通らなければ未接続判定
+rem Connectedでもpingが通らなければ未接続と判定
 for /f "usebackq tokens=*" %%a in (`ping google.com`) do (
 
   echo %date% %time%,%%a >> %logFileName%
 
-  rem 文字列に対してfindコマンドを実行し，実行結果のエラーレベルを調べる
+  rem ホストが見つからなければ未接続と判定
   echo %%a | find "could not find" >NUL
   if not ERRORLEVEL 1 (
     echo %date% %time%, google.com not found>> %logFileName%
     goto notconnection
   )
+  rem pingが100%通らなければ未接続と判定
   echo %%a | find "100% loss" >NUL
   if not ERRORLEVEL 1 (
     echo %date% %time%, Time out google.com access.>> %logFileName%
