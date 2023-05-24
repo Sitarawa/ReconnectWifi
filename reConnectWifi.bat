@@ -43,7 +43,7 @@ for /f "usebackq tokens=*" %%a in (`ping google.com`) do (
     echo %date% %time%, google.com not found>> %logFileName%
     goto notconnection
   )
-  echo %%a | find "要求がタイムアウトしました" >NUL
+  echo %%a | find "100% loss" >NUL
   if not ERRORLEVEL 1 (
     echo %date% %time%, Time out google.com access.>> %logFileName%
     goto notconnection
