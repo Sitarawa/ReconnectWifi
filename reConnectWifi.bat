@@ -30,7 +30,10 @@ rem Connectedが見つからなければ未接続判定
 :checking
 echo [%date% %time%] Checking %interfaceName%...
 netsh interface show interface %interfaceName% | find "Connect state:        Connected" > nul
-if ERRORLEVEL 1 goto notconnection
+if ERRORLEVEL 1 (
+  echo %date% %time%, %interfaceName% not connected>> %logFileName%
+  goto notconnection
+)
 
 rem Connectedでもpingが通らなければ未接続判定
 for /f "usebackq tokens=*" %%a in (`ping google.com`) do (
